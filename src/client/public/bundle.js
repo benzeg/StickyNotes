@@ -79,6 +79,7 @@
 	    _this.onChange = function (editorState) {
 	      return _this.setState({ editorState: editorState });
 	    };
+	    _this.data = {};
 	    return _this;
 	  }
 	
@@ -104,9 +105,14 @@
 	        'div',
 	        { id: 'content' },
 	        _react2.default.createElement(
+	          'button',
+	          null,
+	          'Logout'
+	        ),
+	        _react2.default.createElement(
 	          'h1',
 	          null,
-	          'NOTE EDITOR'
+	          'TEXT EDITOR'
 	        ),
 	        _react2.default.createElement(
 	          'button',
@@ -125,12 +131,22 @@
 	        ),
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'editor' },
-	          _react2.default.createElement(_draftJs.Editor, { editorState: this.state.editorState,
-	            handleKeyCommand: this.handleKeyCommand,
-	            onChange: this.onChange
-	          })
-	        )
+	          { className: 'col-md-7' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'editor' },
+	            _react2.default.createElement(_draftJs.Editor, { editorState: this.state.editorState,
+	              handleKeyCommand: this.handleKeyCommand,
+	              onChange: this.onChange
+	            })
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          { onClick: this.data = this.state.editorState.getCurrentContent() },
+	          'Save'
+	        ),
+	        console.log(this.data)
 	      );
 	    }
 	  }]);

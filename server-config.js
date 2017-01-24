@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var util = require('./lib/utility');
+var path = require('path');
 
 
 var handler = require('./lib/request-handler');
@@ -13,7 +14,7 @@ var app = express();
 app.use(partials());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(__dirname + '..src/client/public'));
+app.use(express.static(path.join(__dirname + '/src/client/public')));
 app.use(cookieParser('shhhh, very secret'));
 app.use(session({
   secret: 'shhh, it\'s a secret',
