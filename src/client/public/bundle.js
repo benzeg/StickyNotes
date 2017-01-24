@@ -75,11 +75,10 @@
 	
 	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 	
-	    _this.state = { editorState: _draftJs.EditorState.createEmpty() };
+	    _this.state = { editorState: _draftJs.EditorState.createEmpty(), notes: [], currentNote: null };
 	    _this.onChange = function (editorState) {
 	      return _this.setState({ editorState: editorState });
 	    };
-	    _this.data = {};
 	    return _this;
 	  }
 	
@@ -99,60 +98,182 @@
 	      this.onChange(_draftJs.RichUtils.toggleInlineStyle(this.state.editorState, 'ITALIC'));
 	    }
 	  }, {
+	    key: '_onSaveClick',
+	    value: function _onSaveClick() {
+	      var note = this.state.editorState.getCurrentContent();
+	      var header = 'Entry ';
+	      var n = this.state.notes.length;
+	      note.id = n;
+	      note.title = header + n;
+	      this.state.notes.push(note);
+	    }
+	  }, {
+	    key: '_handleNoteListEntryTitleClick',
+	    value: function _handleNoteListEntryTitleClick(note) {
+	      this.setState({
+	        currentNote: note
+	      });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
 	        { id: 'content' },
 	        _react2.default.createElement(
-	          'button',
-	          null,
-	          'Logout'
-	        ),
-	        _react2.default.createElement(
-	          'h1',
-	          null,
-	          'TEXT EDITOR'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this._onBoldClick.bind(this) },
-	          'Bold'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this._onUnderlineClick.bind(this) },
-	          'Underline'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this._onItalicizeClick.bind(this) },
-	          'Italic'
-	        ),
-	        _react2.default.createElement(
 	          'div',
-	          { className: 'col-md-7' },
+	          { className: 'row' },
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'editor' },
-	            _react2.default.createElement(_draftJs.Editor, { editorState: this.state.editorState,
-	              handleKeyCommand: this.handleKeyCommand,
-	              onChange: this.onChange
+	            { className: 'col-md-3' },
+	            _react2.default.createElement(
+	              'button',
+	              null,
+	              'Logout'
+	            ),
+	            _react2.default.createElement(
+	              'h2',
+	              null,
+	              'Make a note!'
+	            ),
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this._onBoldClick.bind(this) },
+	              'Bold'
+	            ),
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this._onUnderlineClick.bind(this) },
+	              'Underline'
+	            ),
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this._onItalicizeClick.bind(this) },
+	              'Italic'
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'editor' },
+	              _react2.default.createElement(_draftJs.Editor, { editorState: this.state.editorState,
+	                handleKeyCommand: this.handleKeyCommand,
+	                onChange: this.onChange
+	              })
+	            ),
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this._onSaveClick.bind(this) },
+	              'Save'
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'col-md-1' },
+	            _react2.default.createElement(NoteList, {
+	              handleNoteListEntryTitleClick: this._handleNoteListEntryTitleClick.bind(this),
+	              notes: this.state.notes
 	            })
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'col-md-2' },
+	            _react2.default.createElement(NoteViewer, {
+	              note: this.state.currentNote })
 	          )
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.data = this.state.editorState.getCurrentContent() },
-	          'Save'
-	        ),
-	        console.log(this.data)
+	        )
 	      );
 	    }
 	  }]);
 	
 	  return App;
 	}(_react2.default.Component);
+	
+	////////////////
+	//NOTE LIST/////
+	
+	
+	var NoteList = function NoteList(_ref) {
+	  var notes = _ref.notes,
+	      handleNoteListEntryTitleClick = _ref.handleNoteListEntryTitleClick;
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'note-list' },
+	    notes.map(function (note) {
+	      return _react2.default.createElement(NoteListEntry, {
+	        key: note.id,
+	        note: note,
+	        handleNoteListEntryTitleClick: handleNoteListEntryTitleClick
+	      });
+	    })
+	  );
+	};
+	
+	NoteList.propTypes = {
+	  notes: _react2.default.PropTypes.array.isRequired
+	};
+	
+	///////////////
+	//NOTE LIST ENTRY
+	///////////////
+	var NoteListEntry = function NoteListEntry(_ref2) {
+	  var note = _ref2.note,
+	      handleNoteListEntryTitleClick = _ref2.handleNoteListEntryTitleClick;
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'note-list-entry' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'note-list-entry-title',
+	        onClick: function onClick() {
+	          return handleNoteListEntryTitleClick(note);
+	        } },
+	      note.title
+	    )
+	  );
+	};
+	
+	NoteListEntry.propTypes = {
+	  note: _react2.default.PropTypes.object.isRequired
+	};
+	
+	////////////
+	//NOTE VIEWER
+	////////////
+	
+	var NoteViewer = function (_React$Component2) {
+	  _inherits(NoteViewer, _React$Component2);
+	
+	  function NoteViewer(props) {
+	    _classCallCheck(this, NoteViewer);
+	
+	    var _this2 = _possibleConstructorReturn(this, (NoteViewer.__proto__ || Object.getPrototypeOf(NoteViewer)).call(this, props));
+	
+	    _this2.state = { editorState: _draftJs.EditorState.createEmpty() };
+	    _this2.onChange = function (editorState) {
+	      return _this2.setState({ editorState: editorState });
+	    };
+	    return _this2;
+	  }
+	
+	  _createClass(NoteViewer, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'note-viewer' },
+	        _react2.default.createElement(_draftJs.Editor, { editorState: this.state.editorState,
+	          handleKeyCommand: this.handleKeyCommand,
+	          onChange: this.onChange
+	        })
+	      );
+	    }
+	  }]);
+	
+	  return NoteViewer;
+	}(_react2.default.Component);
+	///////
+	//RENDER///
+	///////////
+	
 	
 	(0, _reactDom.render)(_react2.default.createElement(App, null), document.getElementById('app'));
 

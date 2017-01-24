@@ -18,7 +18,6 @@ users.post('init', function(data) {
       .then(function(hash) {
         data.password = hash;
       });
-  //next();
 });
 
 module.exports.users = users;
