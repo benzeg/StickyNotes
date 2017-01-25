@@ -5,7 +5,7 @@ body {
 }
 
 .editor {
-  background: #fff3a0;
+  background: #fff;
   padding: 8px;
   border: gray solid 2px;
   margin-top: 0px;
@@ -15,7 +15,7 @@ body {
 }
 
 .note-viewer{
-  background: #ffa0f7;
+  background: #fff3a0;
   padding: 8px;
   border: gray solid 2px;
   margin-top: 110px;

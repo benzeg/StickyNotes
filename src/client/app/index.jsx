@@ -1,13 +1,24 @@
 import React from 'react';
 import {render} from 'react-dom';
 import {Editor, EditorState, RichUtils, convertFromRaw, convertToRaw} from 'draft-js';
+///////////////
 
+
+
+
+
+///////////////
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {editorState: EditorState.createEmpty(), notes: [], currentNote: null};
+    this.state = {editorState: EditorState.createEmpty(), notes: []};
+    this.state.currentNote = this.state.editorState.getCurrentContent();
     this.onChange = (editorState) => this.setState({editorState});
   }
+  ////
+
+
+  ////
 
   _onBoldClick() {
   	this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'BOLD'));
@@ -21,6 +32,9 @@ class App extends React.Component {
   	this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'ITALIC'));
   }
 
+  _toggleBulletPoints(){
+    this.onChange(RichUtils.toggleBlockType(this.state.editorState, 'unordered-list-item'));
+  }
   _onSaveClick() {
     var note = this.state.editorState.getCurrentContent();
     var header = 'Entry ';
@@ -30,11 +44,25 @@ class App extends React.Component {
     this.state.notes.push(note);
   }
 
+  _onNextClick() {
+    var currNote = this.state.currentNote;
+    var i = this.state.notes.indexOf(currNote);
+    if (this.state.notes[i+1] !== undefined) {
+      this.state.currentNote = this.state.notes[i+1];
+    } else {
+      this.state.currentNote = this.state.notes[0];
+      console.log('onnextclick');
+    }
+  }
+
+
   _handleNoteListEntryTitleClick(note) {
     this.setState({
       currentNote: note
     });
   }
+
+
 
   render() {
     return (
@@ -50,10 +78,12 @@ class App extends React.Component {
            		  <Editor editorState=
     	       			 {this.state.editorState} 
     	       			 handleKeyCommand={this.handleKeyCommand}
-    	       			 onChange={this.onChange} 
+    	       			 onChange={this.onChange}
+                   spellCheck={true}
            			/>
               </div>
               <button onClick={this._onSaveClick.bind(this)}>Save</button>
+              <button onClick={this._onNextClick.bind(this)}>Next</button>
            	</div>
           <div className="col-md-1">
             <NoteList
@@ -111,25 +141,14 @@ NoteListEntry.propTypes = {
 //NOTE VIEWER
 ////////////
 
-class NoteViewer extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {editorState: EditorState.createEmpty()};
-    this.onChange = (editorState) => this.setState({editorState});
-  }
-
-  render() {
-    return (
+var NoteViewer = ({note}) => (
       <div className='note-viewer'>
         <Editor editorState=
-           {this.state.editorState} 
-           handleKeyCommand={this.handleKeyCommand}
-           onChange={this.onChange} 
+           {EditorState.createWithContent(note)} 
         />
       </div>
     );
-  }
-}
+
 ///////
 //RENDER///
 ///////////
@@ -137,3 +156,5 @@ class NoteViewer extends React.Component {
 
 
 render(<App/>, document.getElementById('app'));
+
+

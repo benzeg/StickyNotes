@@ -32,4 +32,7 @@ app.get('/logout', handler.logoutUser);
 app.get('/signup', handler.signupUserForm);
 app.post('/signup', handler.signupUser);
 
+app.post('/note', handler.savenote);
+app.get('/notes', handler.getnotes);
+
 module.exports = app;

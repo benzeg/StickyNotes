@@ -67,6 +67,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
+	///////////////
+	
+	
+	///////////////
 	var App = function (_React$Component) {
 	  _inherits(App, _React$Component);
 	
@@ -75,12 +79,17 @@
 	
 	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 	
-	    _this.state = { editorState: _draftJs.EditorState.createEmpty(), notes: [], currentNote: null };
+	    _this.state = { editorState: _draftJs.EditorState.createEmpty(), notes: [] };
+	    _this.state.currentNote = _this.state.editorState.getCurrentContent();
 	    _this.onChange = function (editorState) {
 	      return _this.setState({ editorState: editorState });
 	    };
 	    return _this;
 	  }
+	  ////
+	
+	
+	  ////
 	
 	  _createClass(App, [{
 	    key: '_onBoldClick',
@@ -98,6 +107,11 @@
 	      this.onChange(_draftJs.RichUtils.toggleInlineStyle(this.state.editorState, 'ITALIC'));
 	    }
 	  }, {
+	    key: '_toggleBulletPoints',
+	    value: function _toggleBulletPoints() {
+	      this.onChange(_draftJs.RichUtils.toggleBlockType(this.state.editorState, 'unordered-list-item'));
+	    }
+	  }, {
 	    key: '_onSaveClick',
 	    value: function _onSaveClick() {
 	      var note = this.state.editorState.getCurrentContent();
@@ -106,6 +120,18 @@
 	      note.id = n;
 	      note.title = header + n;
 	      this.state.notes.push(note);
+	    }
+	  }, {
+	    key: '_onNextClick',
+	    value: function _onNextClick() {
+	      var currNote = this.state.currentNote;
+	      var i = this.state.notes.indexOf(currNote);
+	      if (this.state.notes[i + 1] !== undefined) {
+	        this.state.currentNote = this.state.notes[i + 1];
+	      } else {
+	        this.state.currentNote = this.state.notes[0];
+	        console.log('onnextclick');
+	      }
 	    }
 	  }, {
 	    key: '_handleNoteListEntryTitleClick',
@@ -156,13 +182,19 @@
 	              { className: 'editor' },
 	              _react2.default.createElement(_draftJs.Editor, { editorState: this.state.editorState,
 	                handleKeyCommand: this.handleKeyCommand,
-	                onChange: this.onChange
+	                onChange: this.onChange,
+	                spellCheck: true
 	              })
 	            ),
 	            _react2.default.createElement(
 	              'button',
 	              { onClick: this._onSaveClick.bind(this) },
 	              'Save'
+	            ),
+	            _react2.default.createElement(
+	              'button',
+	              { onClick: this._onNextClick.bind(this) },
+	              'Next'
 	            )
 	          ),
 	          _react2.default.createElement(
@@ -239,37 +271,16 @@
 	//NOTE VIEWER
 	////////////
 	
-	var NoteViewer = function (_React$Component2) {
-	  _inherits(NoteViewer, _React$Component2);
+	var NoteViewer = function NoteViewer(_ref3) {
+	  var note = _ref3.note;
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'note-viewer' },
+	    _react2.default.createElement(_draftJs.Editor, { editorState: _draftJs.EditorState.createWithContent(note)
+	    })
+	  );
+	};
 	
-	  function NoteViewer(props) {
-	    _classCallCheck(this, NoteViewer);
-	
-	    var _this2 = _possibleConstructorReturn(this, (NoteViewer.__proto__ || Object.getPrototypeOf(NoteViewer)).call(this, props));
-	
-	    _this2.state = { editorState: _draftJs.EditorState.createEmpty() };
-	    _this2.onChange = function (editorState) {
-	      return _this2.setState({ editorState: editorState });
-	    };
-	    return _this2;
-	  }
-	
-	  _createClass(NoteViewer, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'note-viewer' },
-	        _react2.default.createElement(_draftJs.Editor, { editorState: this.state.editorState,
-	          handleKeyCommand: this.handleKeyCommand,
-	          onChange: this.onChange
-	        })
-	      );
-	    }
-	  }]);
-	
-	  return NoteViewer;
-	}(_react2.default.Component);
 	///////
 	//RENDER///
 	///////////

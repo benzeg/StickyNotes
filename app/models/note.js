@@ -2,27 +2,11 @@ var db = require('../config');
 var crypto = require('crypto');
 var mongoose = require('mongoose');
 
-var linkSchema = mongoose.Schema({
-  visits: Number,
-  link: String,
+var noteSchema = mongoose.Schema({
   title: String,
-  code: String,
-  baseUrl: String,
-  url: String
+  contentState: String
 });
 
-var Link = mongoose.model('Link', linkSchema);
+var Note = mongoose.model('Note', noteSchema);
 
-var createSha = function(url) {
-  var shasum = crypto.createHash('sha1');
-  shasum.update(url);
-  return shasum.digest('hex').slice(0, 5);
-};
-
-linkSchema.pre('save', function(next) {
-  var code = createSha(this.url);
-  this.code = code;
-  next();
-});
-
-module.exports = Link;
+module.exports = Note;
